@@ -68,15 +68,15 @@ const NavButtons: React.FC = () => {
   );
 
   return (
-    <div className="mt-3 grid w-3/5 justify-center gap-10 pt-3 md:grid-cols-2">
+    <div className="mt-3 grid justify-center gap-10  pt-3 md:grid-cols-2">
       <div>
         {/* <h2 className="pb-4 text-center text-2xl text-gray-300">Join Room</h2> */}
-        <form className=" flex h-[12rem] w-full flex-col items-center justify-center gap-3 rounded border border-gray-800 py-6  ">
+        <form className="m-auto flex h-[12rem] w-[24rem] flex-col items-center justify-center gap-3 rounded border border-gray-800 py-6  ">
           <div className=" h-1/3 ">
             <p className="text-center text-2xl text-gray-300">Join Room</p>
           </div>
 
-          <label className="h-1/3 w-full px-2">
+          <label className="h-1/3 w-full px-6">
             <span className="sr-only">Enter room key</span>
             <input
               className="block w-full rounded-md border-slate-300 bg-gray-800 p-3 px-6 text-center text-sm placeholder:italic  placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
@@ -95,23 +95,24 @@ const NavButtons: React.FC = () => {
         </form>
       </div>
       <div>
-        <form className="relative flex h-[12rem] flex-col items-center justify-center rounded border border-slate-800 p-6 ">
-          <div className="absolute top-[20%] mx-auto -translate-y-1/2 ">
+        <form className="m-auto flex h-[12rem] w-[24rem] flex-col items-center justify-center gap-3 rounded border border-gray-800 py-6  ">
+          <div className=" h-1/3 ">
             <p className="text-center text-2xl text-gray-300">Create Room</p>
           </div>
 
-          <label className="absolute top-[50%] mx-auto -translate-y-1/2">
+          <label className="h-1/3 w-full px-6">
             <span className="sr-only">Enter room key</span>
             <input
-              className="block w-full rounded-md border-slate-300 bg-gray-800 p-3 text-center text-sm placeholder:italic  placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="block w-full rounded-md border-slate-300 bg-gray-800 p-3 px-6 text-center text-sm placeholder:italic  placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
               placeholder="Enter your room key..."
               type="text"
               name="search"
             />
           </label>
+
           <button
             type="submit"
-            className="hover:bg-gray absolute top-[75%] mx-auto mt-3 w-24 -translate-y-1/2 rounded bg-gray-800 py-2 px-4 text-purple-300"
+            className="hover:bg-gray h-1/3 w-24 rounded bg-gray-800 py-2 px-4 text-purple-300"
           >
             Create
           </button>
