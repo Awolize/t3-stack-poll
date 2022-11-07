@@ -35,6 +35,23 @@ export const pollRouter = router({
       });
     }),
 
+  joinPollGroup: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.pollGroup.update({
+        where: {
+          key: input.key,
+        },
+        data: {
+          users: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      });
+    }),
+
   createPollGroup: protectedProcedure
     .input(z.object({ key: z.string().nullish() }).nullish())
     .mutation(async ({ ctx, input }) => {

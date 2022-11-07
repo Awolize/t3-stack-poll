@@ -67,9 +67,28 @@ const AuthShowcase: React.FC = () => {
 
 const JoinRoomButton: React.FC = () => {
   const { data: sessionData } = useSession();
+  const router = useRouter();
+  const ctx = trpc.useContext();
+  const { mutate } = trpc.poll.joinPollGroup.useMutation({
+    onSuccess: (input) => {
+      console.log(input);
 
-  const handleOnSubmit = () => {
-    console.log("handleOnSubmit");
+      //   ctx.poll.getAllPollGroups.invalidate();
+
+      //   if (input.users. == sessionData?.user?.id) {
+      // todo will always be true becuase it updates the pollGroup
+      router.push({ pathname: input.key });
+      //   }
+    },
+  });
+
+  const handleOnSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      key: { value: string };
+    };
+
+    mutate({ key: target.key.value });
   };
 
   return (
@@ -88,7 +107,7 @@ const JoinRoomButton: React.FC = () => {
             className="block w-full rounded-md border-slate-300 bg-gray-800 p-3 px-6 text-center text-sm placeholder:italic  placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             placeholder="Enter a room key..."
             type="text"
-            name="search"
+            name="key"
           />
         </label>
 
