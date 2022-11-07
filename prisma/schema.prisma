@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -14,28 +14,35 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
+model PollGroup {
     id        String   @id @default(cuid())
+    key       String   @unique
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    polls     Poll[]
+    users     User[]   @relation("member")
+    creator   User     @relation(fields: [creatorId], references: [id])
+    creatorId String
 }
 
 model Poll {
-    id        Int          @id @default(autoincrement())
-    title     String
-    createdAt DateTime     @default(now())
-    updatedAt DateTime     @updatedAt
-    authorId  String
-    author    User         @relation(fields: [authorId], references: [id])
-    choices   PollChoice[]
+    id          String       @id @default(cuid())
+    title       String
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    authorId    String
+    author      User         @relation(fields: [authorId], references: [id])
+    pollGroupId String
+    pollGroup   PollGroup    @relation(fields: [pollGroupId], references: [id])
+    choices     PollChoice[]
 }
 
 model PollChoice {
-    id        Int      @id @default(autoincrement())
+    id        String   @id @default(cuid())
     title     String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    pollId    Int
+    pollId    String
     poll      Poll     @relation(fields: [pollId], references: [id])
     pollVotes User[]
 }
@@ -47,12 +54,12 @@ model Account {
     type                     String
     provider                 String
     providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
+    refresh_token            String? @db.Text
+    access_token             String? @db.Text
     expires_at               Int?
     token_type               String?
     scope                    String?
-    id_token                 String? // @db.Text
+    id_token                 String? @db.Text
     session_state            String?
     refresh_token_expires_in Int? // needed for github
     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -69,15 +76,17 @@ model Session {
 }
 
 model User {
-    id            String       @id @default(cuid())
-    name          String?
-    email         String?      @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    createdPolls  Poll[]
-    votes         PollChoice[]
+    id                String       @id @default(cuid())
+    name              String?
+    email             String?      @unique
+    emailVerified     DateTime?
+    image             String?
+    accounts          Account[]
+    sessions          Session[]
+    pollGroups        PollGroup[]  @relation("member")
+    createdPollGroups PollGroup[]
+    createdPolls      Poll[]
+    votes             PollChoice[]
 }
 
 model VerificationToken {
