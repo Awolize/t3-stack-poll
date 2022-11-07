@@ -108,7 +108,7 @@ const Feed: React.FC = () => {
     console.log(choice);
     console.log(value);
 
-    mutateChoice({ choiceId: choice.id, checked: value });
+    mutateCastVote.mutate({ choiceId: choice.id, checked: value });
   };
 
   return (
@@ -150,7 +150,7 @@ const Feed: React.FC = () => {
           );
 
           return (
-            <div className="flex justify-center">
+            <div className="flex justify-center" key={poll.id}>
               <ul key={poll.id}>
                 {poll.title}
                 {poll.choices.map((choice, index) => (

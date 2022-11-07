@@ -68,7 +68,9 @@ const AuthShowcase: React.FC = () => {
 const JoinRoomButton: React.FC = () => {
   const { data: sessionData } = useSession();
 
-  const handleOnSubmit = () => {};
+  const handleOnSubmit = () => {
+    console.log("handleOnSubmit");
+  };
 
   return (
     <div>
