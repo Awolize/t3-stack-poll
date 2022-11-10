@@ -56,7 +56,7 @@ const AuthShowcase: React.FC = () => {
         <p className="text-2xl text-blue-500">{secretMessage}</p>
       )}
       <button
-        className="rounded-md border border-black bg-violet-800 px-4 py-2 text-xl shadow-lg hover:bg-violet-900"
+        className="mt-6 rounded-md border border-black bg-violet-800 px-4 py-2 text-xl shadow-lg hover:bg-violet-900"
         onClick={sessionData ? () => signOut() : () => signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}

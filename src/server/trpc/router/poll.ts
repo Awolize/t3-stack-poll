@@ -1,56 +1,51 @@
+import { connect } from "http2";
 import { z } from "zod";
 
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const pollRouter = router({
-  hello: publicProcedure
-    .input(z.object({ text: z.string().nullish() }).nullish())
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input?.text ?? "world"}`,
-      };
-    }),
+  hello: publicProcedure.input(z.object({ text: z.string().nullish() }).nullish()).query(({ input }) => {
+    return {
+      greeting: `Hello ${input?.text ?? "world"}`,
+    };
+  }),
   getAllPollGroups: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany({
       select: { name: true },
     });
   }),
 
-  getPollsByGroupKey: protectedProcedure
-    .input(z.object({ key: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.pollGroup.findFirst({
-        where: { key: input.key },
-        include: {
-          polls: {
-            include: {
-              choices: {
-                include: {
-                  pollVotes: true,
-                },
+  getPollsByGroupKey: protectedProcedure.input(z.object({ key: z.string() })).query(({ ctx, input }) => {
+    return ctx.prisma.pollGroup.findFirst({
+      where: { key: input.key },
+      include: {
+        polls: {
+          include: {
+            choices: {
+              include: {
+                pollVotes: true,
               },
             },
           },
         },
-      });
-    }),
+      },
+    });
+  }),
 
-  joinPollGroup: protectedProcedure
-    .input(z.object({ key: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.pollGroup.update({
-        where: {
-          key: input.key,
-        },
-        data: {
-          users: {
-            connect: {
-              id: ctx.session.user.id,
-            },
+  joinPollGroup: protectedProcedure.input(z.object({ key: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.prisma.pollGroup.update({
+      where: {
+        key: input.key,
+      },
+      data: {
+        users: {
+          connect: {
+            id: ctx.session.user.id,
           },
         },
-      });
-    }),
+      },
+    });
+  }),
 
   createPollGroup: protectedProcedure
     .input(z.object({ key: z.string().nullish() }).nullish())
@@ -59,6 +54,11 @@ export const pollRouter = router({
         data: {
           key: input?.key ?? (Math.random() + 1).toString(36).substring(7),
           creatorId: ctx.session.user.id,
+          users: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
         },
       });
     }),
@@ -109,29 +109,18 @@ export const pollRouter = router({
     .mutation(async ({ ctx, input }) => {
       //validate groupId
       console.log(input.pollGroupId);
+      console.log("Hello");
 
       const valid = await ctx.prisma.user.count({
         where: {
-          OR: [
-            {
-              //member of poll group
-              pollGroups: {
-                some: {
-                  key: input.pollGroupId,
-                },
-              },
+          pollGroups: {
+            some: {
+              key: input.pollGroupId,
             },
-            {
-              //creator of poll group
-              createdPollGroups: {
-                some: {
-                  key: input.pollGroupId,
-                },
-              },
-            },
-          ],
+          },
         },
       });
+      console.log(valid);
 
       if (valid > 0) {
         const choicesToCreate = input.choices.map((elem) => {
