@@ -98,7 +98,7 @@ const Feed: React.FC = () => {
 
   const [choices, setChoices] = useState(1);
   const renderChoices = () => {
-    const jsx = [];
+    const jsx: any[] = [];
 
     const input = (id: any) => {
       return <input className={inputStyle} placeholder="Type an answer" type="text" name="choice" id={id} />;
