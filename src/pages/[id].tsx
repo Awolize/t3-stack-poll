@@ -64,11 +64,7 @@ const Feed: React.FC = () => {
     },
   });
 
-  const handleCreatePoll = async (
-    e: React.FormEvent<HTMLInputElement> & {
-      target: { choice: { forEach: (arg0: (elem: { value: string }) => number) => any; value: string } };
-    },
-  ) => {
+  const handleCreatePoll = async (e: any) => {
     e.preventDefault();
 
     // it changes type depending on if its more than 1 item, but then its not a list... oh no.... its an objectList
@@ -77,7 +73,7 @@ const Feed: React.FC = () => {
       ? e.target.choice.forEach((elem: { value: string }) => choicesList.push(elem.value))
       : choicesList.push(e.target.choice.value);
 
-    let target = e.target as typeof e.target & {
+    const target = e.target as typeof e.target & {
       title: { value: string };
     };
 
@@ -133,7 +129,6 @@ const Feed: React.FC = () => {
             +
           </button>
         </div>
-        {/* @ts-ignore */}
         <form onSubmit={handleCreatePoll} className="flex flex-col gap-2 ">
           <input className={inputStyle + " mb-2"} placeholder="Type your question" type="text" name="title" />
 
