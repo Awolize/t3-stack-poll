@@ -133,6 +133,8 @@ const Feed: React.FC = () => {
             +
           </button>
         </div>
+       {/*
+         // @ts-ignore*/}
         <form onSubmit={handleCreatePoll} className="flex flex-col gap-2 ">
           <input className={inputStyle + " mb-2"} placeholder="Type your question" type="text" name="title" />
 
