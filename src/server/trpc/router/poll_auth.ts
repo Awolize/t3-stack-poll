@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, publicProcedure } from "../trpc";
 
 export const authPollRouter = router({
   getAllPollGroups: protectedProcedure.query(({ ctx }) => {
@@ -10,7 +10,7 @@ export const authPollRouter = router({
     });
   }),
 
-  getPollsByGroupKey: protectedProcedure.input(z.object({ key: z.string() })).query(({ ctx, input }) => {
+  getPollsByGroupKey: publicProcedure.input(z.object({ key: z.string() })).query(({ ctx, input }) => {
     return ctx.prisma.pollGroup.findFirst({
       where: { key: input.key },
       include: {
@@ -23,7 +23,7 @@ export const authPollRouter = router({
     });
   }),
 
-  getPoll: protectedProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
+  getPoll: publicProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
     return ctx.prisma.poll.findFirst({
       where: { id: input.id },
       include: {
@@ -36,7 +36,7 @@ export const authPollRouter = router({
     });
   }),
 
-  getPollChoice: protectedProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
+  getPollChoice: publicProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
     return ctx.prisma.pollChoice.findFirst({
       where: { id: input.id },
       include: {
@@ -51,7 +51,7 @@ export const authPollRouter = router({
     });
   }),
 
-  getPollTotalVoters: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+  getPollTotalVoters: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
     const poll = await ctx.prisma.poll.findFirst({
       where: {
         id: input.id,

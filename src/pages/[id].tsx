@@ -23,7 +23,7 @@ const PollHome: NextPage = () => {
       </Head>
       <div className=" d flex h-screen flex-row text-slate-500">
         <div className="basis-1/6 p-2 ">
-          <p className="text-purple-300 opacity-50">Room key: {pollsByGroup.data?.key}</p>
+          <p className="text-purple-300 opacity-50">Room key: {key}</p>
         </div>
         <div className="basis-4/6 p-2 ">
           <Feed key={key} />

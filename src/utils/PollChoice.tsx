@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import React from "react";
 import { trpc } from "./trpc";
 
@@ -8,18 +9,23 @@ type Prop = {
 };
 
 const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
+  const { data: sessionData } = useSession();
   const ctx = trpc.useContext();
 
   const { data: choice } = trpc.authPoll.getPollChoice.useQuery({
     id: pollChoiceId,
   });
-  const { data: status } = trpc.authPoll.getPollChoiceStatus.useQuery({
-    id: pollChoiceId,
-  });
+
+  let pressed: boolean = false;
+  if (sessionData)
+    pressed =
+      trpc.authPoll.getPollChoiceStatus.useQuery({
+        id: pollChoiceId,
+      }).data ?? false;
 
   const voters = choice?.voters ?? [];
-  const pressed = status;
   const procentageOfVotes = (voters.length / total) * 100;
+  console.log("procentageOfVotes", procentageOfVotes);
 
   const mutateCastVote = trpc.authPoll.pollVote.useMutation({
     onSuccess: () => {
@@ -35,7 +41,8 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
     }
   };
 
-  const fillTW = "h-full text-md rounded-r-lg p-2  font-medium leading-none " + (pressed ? "bg-blue-800" : "");
+  const fillTW =
+    "h-full text-md rounded-r-lg p-2  font-medium leading-none " + (pressed ? "bg-blue-800" : "bg-gray-800");
   const outerTW = "h-full w-full rounded-md";
 
   return choice ? (
