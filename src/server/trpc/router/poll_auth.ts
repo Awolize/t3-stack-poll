@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { router, protectedProcedure } from "../trpc";
@@ -14,16 +15,81 @@ export const authPollRouter = router({
       where: { key: input.key },
       include: {
         polls: {
-          include: {
-            choices: {
-              include: {
-                pollVotes: true,
-              },
-            },
+          select: {
+            id: true,
           },
         },
       },
     });
+  }),
+
+  getPoll: protectedProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
+    return ctx.prisma.poll.findFirst({
+      where: { id: input.id },
+      include: {
+        choices: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }),
+
+  getPollChoice: protectedProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
+    return ctx.prisma.pollChoice.findFirst({
+      where: { id: input.id },
+      include: {
+        voters: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+  }),
+
+  getPollTotalVoters: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const poll = await ctx.prisma.poll.findFirst({
+      where: {
+        id: input.id,
+      },
+
+      include: {
+        choices: {
+          select: {
+            voters: true,
+          },
+        },
+      },
+    });
+
+    let sum = 0;
+    for (const choiceIndex in poll?.choices) {
+      if (Object.prototype.hasOwnProperty.call(poll?.choices, choiceIndex)) {
+        const choice = poll?.choices[choiceIndex];
+        sum += choice.voters.length;
+      }
+    }
+
+    return sum;
+  }),
+
+  getPollChoiceStatus: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return (
+      (await ctx.prisma.pollChoice.count({
+        where: {
+          id: input.id,
+          voters: {
+            some: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      })) > 0
+    );
   }),
 
   joinPollGroup: protectedProcedure.input(z.object({ key: z.string() })).mutation(async ({ ctx, input }) => {
@@ -64,7 +130,7 @@ export const authPollRouter = router({
         return await ctx.prisma.pollChoice.update({
           where: { id: input.choiceId },
           data: {
-            pollVotes: {
+            voters: {
               connect: { id: ctx.session.user.id },
             },
           },
@@ -73,7 +139,7 @@ export const authPollRouter = router({
         return await ctx.prisma.pollChoice.update({
           where: { id: input.choiceId },
           data: {
-            pollVotes: {
+            voters: {
               disconnect: { id: ctx.session.user.id },
             },
           },
@@ -120,10 +186,14 @@ export const authPollRouter = router({
           },
         });
 
+        if (!pollGroup) {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        }
+
         return ctx.prisma.poll.create({
           data: {
             title: input.title,
-            pollGroupId: pollGroup!.id,
+            pollGroupId: pollGroup.id,
             authorId: ctx.session.user.id,
             choices: {
               create: choicesToCreate,

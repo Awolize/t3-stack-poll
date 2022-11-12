@@ -4,7 +4,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
 import { useRouter } from "next/router";
-import { PollGroup } from "@prisma/client";
 
 const Home: NextPage = () => {
   //   const { data, isLoading, isError } = trpc.authPoll.getAllPollGroups.useQuery({
@@ -19,7 +18,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container flex min-h-screen min-w-full flex-col items-center justify-center">
-        <h1 className="font-extrabold leading-normal text-gray-300 md:text-[2rem]">
+        <h1 className="text-4xl font-extrabold leading-normal text-gray-300">
           Create <span className="text-purple-300">Your</span> Poll
         </h1>
         <div className="mt-3 grid justify-center gap-10  pt-3 md:grid-cols-2">
@@ -70,7 +69,7 @@ const AuthShowcase: React.FC = () => {
       {/* {sessionData && <p className="text-2xl text-blue-500">Logged in as {sessionData?.user?.name}</p>} */}
       {secretMessage && (
         <>
-          <h1 className="font-extrabold leading-normal text-gray-300 md:text-[2rem]">
+          <h1 className="text-3xl font-extrabold leading-normal text-gray-300">
             <span className="text-purple-300">Your</span> Groups: {/* Your Groups */}
           </h1>
           <ul className="flex flex-col gap-1">
@@ -185,7 +184,7 @@ const HostRoomButton: React.FC = () => {
           <p className="text-center text-2xl text-gray-300">Create Room</p>
         </div>
 
-        <label className="h-1/3 w-full px-6">
+        <div className="h-1/3 w-full px-6">
           <span className="sr-only">Enter room key</span>
           <input
             className="block w-full rounded-md border-slate-300 bg-gray-800 p-3 px-6 text-center text-sm placeholder:italic  placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
@@ -193,9 +192,13 @@ const HostRoomButton: React.FC = () => {
             type="text"
             name="key"
           />
-        </label>
+          <div className="float-right flex flex-row gap-2">
+            <input type="checkbox" name="private" />
+            <label>Private</label>
+          </div>
+        </div>
 
-        <button type="submit" className="hover:bg-gray h-1/3 w-24 rounded bg-gray-800 py-2 px-4 text-purple-300">
+        <button type="submit" className="hover:bg-gray w-24 rounded bg-gray-800 py-2 px-4 text-purple-300">
           Create
         </button>
       </form>
