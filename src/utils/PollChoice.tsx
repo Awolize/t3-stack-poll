@@ -16,7 +16,7 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
     id: pollChoiceId,
   });
 
-  let pressed: boolean = false;
+  let pressed = false;
   if (sessionData)
     pressed =
       trpc.authPoll.getPollChoiceStatus.useQuery({
