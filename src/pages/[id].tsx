@@ -3,10 +3,11 @@ import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
-import { Poll, PollChoice } from "@prisma/client";
+import { PollChoice } from "@prisma/client";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, MouseEventHandler, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import CloseButton from "../utils/CloseButton";
 
 const PollHome: NextPage = () => {
   const router = useRouter();
@@ -56,6 +57,15 @@ const Feed: React.FC = () => {
   });
 
   const mutateCreatePoll = trpc.poll.createPoll.useMutation({
+    onSuccess: (input) => {
+      console.log(input);
+
+      ctx.poll.getPollsByGroupKey.invalidate();
+      setChoices(1);
+    },
+  });
+
+  const mutateDeletePoll = trpc.poll.deletePoll.useMutation({
     onSuccess: (input) => {
       console.log(input);
 
@@ -150,41 +160,55 @@ const Feed: React.FC = () => {
           );
 
           return (
-            <div className="flex justify-center" key={poll.id}>
-              <ul key={poll.id}>
-                {poll.title}
-                {poll.choices.map((choice, index) => (
-                  <li key={choice.id}>
-                    <ul className="flex flex-row gap-6">
-                      <li>{index + 1}.</li> <li>{choice.title}</li>
-                      <li>
-                        <label>
-                          <input
-                            onChange={(e: React.SyntheticEvent) => {
-                              const target = e.target as typeof e.target & {
-                                checked: boolean;
-                              };
+            <div className="container text-slate-200" key={poll.id}>
+              <div key={poll.id} className="divide-y-4 divide-bg rounded bg-slate-800">
+                <div className="flex gap-3 p-4 ">
+                  <div className="flex w-full">
+                    <p style={{ wordBreak: "break-word" }} className="float-left my-auto break-words text-lg">
+                      {poll.title}
+                    </p>
+                  </div>
 
-                              handleCheckBoxClick(choice, target.checked);
-                            }}
-                            type="checkbox"
-                            name="checkbox"
-                            checked={choice.pollVotes.some((user) => user.id === sessionData?.user?.id)}
-                          />
-                        </label>
-                      </li>
-                    </ul>
-                  </li>
-                ))}
-              </ul>
+                  <div className="float-right my-auto">{deleteBtn(poll.id)}</div>
+                </div>
+                <div className="w-full divide-y-2 divide-bg ">
+                  {poll.choices.map((choice, index) => (
+                    <div key={choice.id} className="flex flex-row bg-slate-800 p-2 px-10 py-3">
+                      <div className="flex flex-row gap-6 ">
+                        <div>{index + 1}.</div> <div>{choice.title}</div>
+                        <div>
+                          <label>
+                            <input
+                              onChange={(e: React.SyntheticEvent) => {
+                                const target = e.target as typeof e.target & {
+                                  checked: boolean;
+                                };
+
+                                handleCheckBoxClick(choice, target.checked);
+                              }}
+                              type="checkbox"
+                              name="checkbox"
+                              checked={choice.pollVotes.some((user) => user.id === sessionData?.user?.id)}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           );
         })}
     </div>
   );
+
+  function deleteBtn(pollId: string) {
+    return <CloseButton callback={() => mutateDeletePoll.mutate({ pollId: pollId })} />;
+  }
 };
 
-const Settings: React.FC = () => {
+const Settings: React.FC = (): JSX.Element => {
   return (
     <div className="flex flex-row justify-end gap-4 ">
       <button className="flex h-16 w-16 items-center justify-center border border-gray-800 text-center ">Logout</button>
@@ -194,21 +218,3 @@ const Settings: React.FC = () => {
     </div>
   );
 };
-
-{
-  /* <ul>
-  <>
-    {data &&
-      data.polls.map((poll: Poll, index: number) => (
-        <li key={poll.id}>
-          <ul className="flex flex-row gap-3">
-            <li>poll nr {index}</li>
-            <li>{poll.id}</li>
-            <li>{poll.title}</li>
-            <li>{poll.createdAt.toLocaleString()}</li>
-          </ul>
-        </li>
-      ))}
-  </>
-</ul>; */
-}

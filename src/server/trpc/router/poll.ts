@@ -107,10 +107,7 @@ export const pollRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      //validate groupId
-      console.log(input.pollGroupId);
-      console.log("Hello");
-
+      // validate is member of group with key
       const valid = await ctx.prisma.user.count({
         where: {
           pollGroups: {
@@ -123,9 +120,11 @@ export const pollRouter = router({
       console.log(valid);
 
       if (valid > 0) {
-        const choicesToCreate = input.choices.map((elem) => {
-          return { title: elem };
-        });
+        const choicesToCreate = input.choices
+          .map((elem) => {
+            return { title: elem };
+          })
+          .filter((elem) => elem.title);
 
         console.log("input.title", input.title);
         console.log("ctx.session.user.id", ctx.session.user.id);
@@ -146,6 +145,38 @@ export const pollRouter = router({
             choices: {
               create: choicesToCreate,
             },
+          },
+        });
+      }
+    }),
+
+  deletePoll: protectedProcedure
+    .input(
+      z.object({
+        pollId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // is the request user the creator of the poll?
+      const pollToDelete = await ctx.prisma.user.findFirst({
+        where: {
+          createdPolls: {
+            some: {
+              id: input.pollId,
+            },
+          },
+        },
+      });
+      console.log(pollToDelete);
+
+      if (pollToDelete != null) {
+        // get Poll by Id
+        return ctx.prisma.poll.delete({
+          where: {
+            id: input.pollId,
+          },
+          include: {
+            choices: true,
           },
         });
       }
