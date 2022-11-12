@@ -1,10 +1,12 @@
 import { router } from "../trpc";
 import { authRouter } from "./auth";
-import { pollRouter } from "./poll";
+import { publicPollRouter } from "./poll";
+import { authPollRouter } from "./poll_auth";
 
 export const appRouter = router({
   auth: authRouter,
-  poll: pollRouter,
+  publicPoll: publicPollRouter,
+  authPoll: authPollRouter,
 });
 
 // export type definition of API

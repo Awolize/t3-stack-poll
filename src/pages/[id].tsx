@@ -13,7 +13,7 @@ const PollHome: NextPage = () => {
   const router = useRouter();
   const key = router.asPath.substring(1);
 
-  const pollsByGroup = trpc.poll.getPollsByGroupKey.useQuery({
+  const pollsByGroup = trpc.authPoll.getPollsByGroupKey.useQuery({
     key: key,
   });
   return (
@@ -45,31 +45,31 @@ const Feed: React.FC = () => {
   const ctx = trpc.useContext();
   const router = useRouter();
   const key = router.asPath.substring(1);
-  const { data, isLoading, isError } = trpc.poll.getPollsByGroupKey.useQuery({
+  const { data, isLoading, isError } = trpc.authPoll.getPollsByGroupKey.useQuery({
     key: key,
   });
 
-  const mutateCastVote = trpc.poll.pollVote.useMutation({
+  const mutateCastVote = trpc.authPoll.pollVote.useMutation({
     onSuccess: (input) => {
       console.log("pollVote:", input);
-      ctx.poll.getPollsByGroupKey.invalidate();
+      ctx.authPoll.getPollsByGroupKey.invalidate();
     },
   });
 
-  const mutateCreatePoll = trpc.poll.createPoll.useMutation({
+  const mutateCreatePoll = trpc.authPoll.createPoll.useMutation({
     onSuccess: (input) => {
       console.log(input);
 
-      ctx.poll.getPollsByGroupKey.invalidate();
+      ctx.authPoll.getPollsByGroupKey.invalidate();
       setChoices(1);
     },
   });
 
-  const mutateDeletePoll = trpc.poll.deletePoll.useMutation({
+  const mutateDeletePoll = trpc.authPoll.deletePoll.useMutation({
     onSuccess: (input) => {
       console.log(input);
 
-      ctx.poll.getPollsByGroupKey.invalidate();
+      ctx.authPoll.getPollsByGroupKey.invalidate();
       setChoices(1);
     },
   });
