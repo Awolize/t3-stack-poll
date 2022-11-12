@@ -76,6 +76,7 @@ const AuthShowcase: React.FC = () => {
           <ul className="flex flex-col gap-1">
             {secretMessage.map((elem) => (
               <button
+                key={elem.key}
                 onClick={() => handleGroupJoinButton(elem.key)}
                 className="h-full rounded-md text-center text-lg underline decoration-purple-300  shadow-lg hover:text-gray-300"
               >
