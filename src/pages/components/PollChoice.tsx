@@ -6,9 +6,10 @@ type Prop = {
   pollChoiceId: string;
   total: number;
   pollId: string;
+  shown: boolean;
 };
 
-const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
+const PollChoice = ({ total, pollChoiceId, pollId, shown }: Prop): JSX.Element => {
   const { data: sessionData } = useSession();
   const ctx = trpc.useContext();
 
@@ -43,25 +44,26 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
   const procentageWidth = procentageOfVotes > 0 ? procentageOfVotes : 100;
   const fillTW =
     "h-full text-md rounded-r-lg p-2  font-medium leading-none " + (pressed ? "bg-blue-800" : "bg-gray-800");
-  const outerTW = "h-full w-full rounded-md";
 
-  return choice ? (
-    <div onClick={() => handleVoteClick(!pressed)} className={outerTW}>
+  const opacity = choice ? " opacity-100" : " opacity-0";
+  return (
+    <div
+      onClick={() => handleVoteClick(!pressed)}
+      className={"h-full w-full rounded-md duration-1000 ease-in-out" + opacity}
+    >
       <div className="relative flex flex-row">
         <div
           className={procentageOfVotes > 0 ? fillTW : "h-full p-2 font-medium leading-none text-blue-100"}
           style={{ width: `${procentageWidth}%` }}
         >
           <ul className="flex flex-row gap-4">
-            <li className="w-14">{procentageOfVotes}%</li>
-            <li>{choice.title}</li>
+            <li className="w-14">{procentageOfVotes.toFixed(0)}%</li>
+            <li>{choice?.title}</li>
           </ul>
         </div>
         <div className="absolute right-4 pt-1">{voters.length}</div>
       </div>
     </div>
-  ) : (
-    <></>
   );
 };
 

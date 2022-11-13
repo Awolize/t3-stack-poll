@@ -51,6 +51,21 @@ export const authPollRouter = router({
     });
   }),
 
+  getPollGroupMembers: publicProcedure.input(z.object({ key: z.string() })).query(({ ctx, input }) => {
+    return ctx.prisma.pollGroup.findFirst({
+      where: { key: input.key },
+      include: {
+        users: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+  }),
+
   getPollTotalVoters: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
     const poll = await ctx.prisma.poll.findFirst({
       where: {

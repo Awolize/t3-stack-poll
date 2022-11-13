@@ -38,7 +38,7 @@ const Poll = ({ pollId }: Prop): JSX.Element => {
   return !isLoading && !totalLoading && poll ? (
     <div key={poll.id} className="flex flex-col gap-4 rounded ">
       {/* Poll title text and delete button */}
-      <div className="flex gap-3 rounded-t bg-slate-800 p-4">
+      <div className="flex gap-3 rounded-t border-2 border-slate-800 p-4">
         <div className="flex w-full">
           <p style={{ wordBreak: "break-word" }} className="text-md float-left my-auto break-words">
             {poll.title}
@@ -48,10 +48,10 @@ const Poll = ({ pollId }: Prop): JSX.Element => {
         {poll.authorId == sessionData?.user?.id && <div className="float-right my-auto">{deleteBtn(poll.id)}</div>}
       </div>
 
-      <div className="flex w-full flex-col gap-3  bg-bg">
+      <div className="flex w-full flex-col gap-3 bg-bg">
         {show &&
           poll.choices.map((choice) => (
-            <PollChoice key={choice.id} pollChoiceId={choice.id} total={total ?? 0} pollId={pollId} />
+            <PollChoice key={choice.id} pollChoiceId={choice.id} total={total ?? 0} shown={show} pollId={pollId} />
           ))}
       </div>
     </div>
