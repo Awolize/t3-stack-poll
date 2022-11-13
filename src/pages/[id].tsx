@@ -83,7 +83,7 @@ export const Settings: React.FC = (): JSX.Element => {
 
   return (
     <div className="flex flex-row justify-end gap-4 p-2">
-      {sessionData && (
+      {sessionData && key && (
         <button
           onClick={() => setOpen(true)}
           className="flex h-16 w-16 items-center justify-center border border-gray-800  text-center text-slate-500 "
@@ -97,14 +97,13 @@ export const Settings: React.FC = (): JSX.Element => {
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
-      {key && (
-        <>
-          <button className="flex h-16 w-16 items-center justify-center border border-gray-800  text-center text-slate-500 ">
-            Profile
-          </button>
-          {MemberModal(key, open, setOpen)}
-        </>
+
+      {sessionData && (
+        <button className="flex h-16 w-16 items-center justify-center border border-gray-800  text-center text-slate-500 ">
+          Profile
+        </button>
       )}
+      {key && MemberModal(key, open, setOpen)}
     </div>
   );
 };
