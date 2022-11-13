@@ -1,6 +1,8 @@
-import React from "react";
+import { useSession } from "next-auth/react";
+import React, { useState } from "react";
 import { trpc } from "../../utils/trpc";
 import CloseButton from "./CloseButton";
+import ExpandButton from "./ExpandButton";
 import PollChoice from "./PollChoice";
 
 type Prop = {
@@ -8,7 +10,10 @@ type Prop = {
 };
 
 const Poll = ({ pollId }: Prop): JSX.Element => {
+  const { data: sessionData } = useSession();
   const ctx = trpc.useContext();
+
+  const [show, setShow] = useState(true);
 
   const { data: total, isLoading: totalLoading } = trpc.authPoll.getPollTotalVoters.useQuery({
     id: pollId,
@@ -31,13 +36,15 @@ const Poll = ({ pollId }: Prop): JSX.Element => {
             {poll.title}
           </p>
         </div>
-        <div className="float-right my-auto">{deleteBtn(poll.id)}</div>
+        <div className="float-right my-auto">{expandBtn(show)}</div>
+        {poll.authorId == sessionData?.user?.id && <div className="float-right my-auto">{deleteBtn(poll.id)}</div>}
       </div>
 
       <div className="flex w-full flex-col gap-3  bg-bg">
-        {poll.choices.map((choice) => (
-          <PollChoice key={choice.id} pollChoiceId={choice.id} total={total ?? 0} pollId={pollId} />
-        ))}
+        {show &&
+          poll.choices.map((choice) => (
+            <PollChoice key={choice.id} pollChoiceId={choice.id} total={total ?? 0} pollId={pollId} />
+          ))}
       </div>
     </div>
   ) : (
@@ -46,6 +53,10 @@ const Poll = ({ pollId }: Prop): JSX.Element => {
 
   function deleteBtn(pollId: string) {
     return <CloseButton callback={() => mutateDeletePoll.mutate({ pollId: pollId })} />;
+  }
+
+  function expandBtn(state) {
+    return <ExpandButton state={state} callback={() => setShow((prev) => !prev)} />;
   }
 
   const mutateDeletePoll = trpc.authPoll.deletePoll.useMutation({
