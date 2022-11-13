@@ -28,7 +28,7 @@ const PollHome: NextPage = () => {
         <div className="basis-4/6 p-2 ">
           <Feed key={key} />
         </div>
-        <div className="basis-1/6 p-2 ">
+        <div className="basis-1/6  ">
           <Settings />
         </div>
       </div>
@@ -147,18 +147,18 @@ const Feed: React.FC = () => {
   );
 };
 
-const Settings: React.FC = (): JSX.Element => {
+export const Settings: React.FC = (): JSX.Element => {
   const { data: sessionData } = useSession();
 
   return (
-    <div className="flex flex-row justify-end gap-4 ">
+    <div className="flex flex-row justify-end gap-4 p-2">
       <button
         onClick={sessionData ? () => signOut() : () => signIn()}
-        className="flex h-16 w-16 items-center justify-center border border-gray-800 text-center "
+        className="h-17 w-17 flex items-center justify-center rounded-md  border border-black bg-violet-800   p-2 text-center  text-sm text-white shadow-lg hover:bg-violet-900 "
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
-      <button className="flex h-16 w-16 items-center justify-center border border-gray-800 text-center ">
+      <button className="flex h-16 w-16 items-center justify-center border border-gray-800  text-center text-slate-500 ">
         Profile
       </button>
     </div>
