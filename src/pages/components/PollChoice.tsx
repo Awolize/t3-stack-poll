@@ -40,22 +40,28 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
     }
   };
 
+  const procentageWidth = procentageOfVotes > 0 ? procentageOfVotes : 100;
   const fillTW =
     "h-full text-md rounded-r-lg p-2  font-medium leading-none " + (pressed ? "bg-blue-800" : "bg-gray-800");
   const outerTW = "h-full w-full rounded-md";
 
   return choice ? (
     <div onClick={() => handleVoteClick(!pressed)} className={outerTW}>
-      {procentageOfVotes > 0 ? (
-        <div className={fillTW} style={{ width: `${procentageOfVotes}%` }}>
-          {choice.title}
+      <div className="relative flex flex-row">
+        <div
+          className={procentageOfVotes > 0 ? fillTW : "h-full p-2 font-medium leading-none text-blue-100"}
+          style={{ width: `${procentageWidth}%` }}
+        >
+          <ul className="flex flex-row gap-4">
+            <li className="w-14">{procentageOfVotes}%</li>
+            <li>{choice.title}</li>
+          </ul>
         </div>
-      ) : (
-        <div className={"h-full w-full p-2 font-medium leading-none text-blue-100 "}>{choice.title}</div>
-      )}
+        <div className="absolute right-0">{voters.length}</div>
+      </div>
     </div>
   ) : (
-    <div>Loading</div>
+    <></>
   );
 };
 

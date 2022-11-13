@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       <header>
         <Settings />
       </header>
-      <main className="flex min-h-screen min-w-full flex-col items-center justify-center">
+      <main className="flex h-screen w-screen  flex-col items-center justify-center">
         <h1 className="text-4xl font-extrabold leading-normal text-gray-300">
           Create <span className="text-purple-300">Your</span> Poll
         </h1>
