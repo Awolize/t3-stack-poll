@@ -24,7 +24,7 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
       }).data ?? false;
 
   const voters = choice?.voters ?? [];
-  const procentageOfVotes = (voters.length / total) * 100;
+  const procentageOfVotes = (voters.length / (total ? total : 1)) * 100;
 
   const mutateCastVote = trpc.authPoll.pollVote.useMutation({
     onSuccess: () => {
@@ -57,7 +57,7 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
             <li>{choice.title}</li>
           </ul>
         </div>
-        <div className="absolute right-0">{voters.length}</div>
+        <div className="absolute right-4 pt-1">{voters.length}</div>
       </div>
     </div>
   ) : (

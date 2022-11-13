@@ -27,6 +27,14 @@ const Poll = ({ pollId }: Prop): JSX.Element => {
 
   console.log({ id: pollId });
 
+  const mutateDeletePoll = trpc.authPoll.deletePoll.useMutation({
+    onSuccess: (input) => {
+      console.log(input);
+
+      ctx.authPoll.getPollsByGroupKey.invalidate();
+    },
+  });
+
   return !isLoading && !totalLoading && poll ? (
     <div key={poll.id} className="flex flex-col gap-4 rounded ">
       {/* Poll title text and delete button */}
@@ -58,14 +66,6 @@ const Poll = ({ pollId }: Prop): JSX.Element => {
   function expandBtn(state) {
     return <ExpandButton state={state} callback={() => setShow((prev) => !prev)} />;
   }
-
-  const mutateDeletePoll = trpc.authPoll.deletePoll.useMutation({
-    onSuccess: (input) => {
-      console.log(input);
-
-      ctx.authPoll.getPollsByGroupKey.invalidate();
-    },
-  });
 };
 
 export default Poll;
