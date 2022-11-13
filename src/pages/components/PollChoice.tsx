@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import React from "react";
-import { trpc } from "./trpc";
+import { trpc } from "../../utils/trpc";
 
 type Prop = {
   pollChoiceId: string;
@@ -25,7 +25,6 @@ const PollChoice = ({ total, pollChoiceId, pollId }: Prop): JSX.Element => {
 
   const voters = choice?.voters ?? [];
   const procentageOfVotes = (voters.length / total) * 100;
-  console.log("procentageOfVotes", procentageOfVotes);
 
   const mutateCastVote = trpc.authPoll.pollVote.useMutation({
     onSuccess: () => {

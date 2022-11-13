@@ -1,11 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Link from "next/link";
-import Poll from "../utils/Poll";
+import Poll from "./components/Poll";
 
 const PollHome: NextPage = () => {
   const router = useRouter();
@@ -148,9 +148,16 @@ const Feed: React.FC = () => {
 };
 
 const Settings: React.FC = (): JSX.Element => {
+  const { data: sessionData } = useSession();
+
   return (
     <div className="flex flex-row justify-end gap-4 ">
-      <button className="flex h-16 w-16 items-center justify-center border border-gray-800 text-center ">Logout</button>
+      <button
+        onClick={sessionData ? () => signOut() : () => signIn()}
+        className="flex h-16 w-16 items-center justify-center border border-gray-800 text-center "
+      >
+        {sessionData ? "Sign out" : "Sign in"}
+      </button>
       <button className="flex h-16 w-16 items-center justify-center border border-gray-800 text-center ">
         Profile
       </button>

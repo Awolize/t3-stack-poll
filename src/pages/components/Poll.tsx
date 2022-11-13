@@ -1,6 +1,6 @@
 import React from "react";
+import { trpc } from "../../utils/trpc";
 import CloseButton from "./CloseButton";
-import { trpc } from "./trpc";
 import PollChoice from "./PollChoice";
 
 type Prop = {
