@@ -77,6 +77,8 @@ const Feed: React.FC = () => {
 
 export const Settings: React.FC = (): JSX.Element => {
   const { data: sessionData } = useSession();
+  const router = useRouter();
+  const key = router.asPath.substring(1);
   const [open, setOpen] = useState(false);
 
   return (
@@ -95,10 +97,14 @@ export const Settings: React.FC = (): JSX.Element => {
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
-      <button className="flex h-16 w-16 items-center justify-center border border-gray-800  text-center text-slate-500 ">
-        Profile
-      </button>
-      {MemberModal(open, setOpen)}
+      {key && (
+        <>
+          <button className="flex h-16 w-16 items-center justify-center border border-gray-800  text-center text-slate-500 ">
+            Profile
+          </button>
+          {MemberModal(key, open, setOpen)}
+        </>
+      )}
     </div>
   );
 };
@@ -106,13 +112,11 @@ export const Settings: React.FC = (): JSX.Element => {
 import { Dialog, Transition } from "@headlessui/react";
 import { UsersIcon } from "@heroicons/react/24/solid";
 
-export function MemberModal(open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>) {
+export function MemberModal(groupId: string, open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>) {
   const cancelButtonRef = useRef(null);
-  const router = useRouter();
-  const key = router.asPath.substring(1);
 
   const { data } = trpc.authPoll.getPollGroupMembers.useQuery({
-    key: key,
+    key: groupId,
   });
 
   return (
