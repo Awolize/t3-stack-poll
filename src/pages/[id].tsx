@@ -159,16 +159,19 @@ export function MemberModal(groupId: string, open: boolean, setOpen: React.Dispa
                                 key={elem.id}
                                 className="flex w-full items-center gap-2 rounded-md border border-slate-800 p-1"
                               >
-                                {elem.image && (
-                                  <Image
-                                    alt="avatar"
-                                    className="rounded-full "
-                                    src={elem.image}
-                                    width={40}
-                                    height={40}
-                                  />
-                                )}
-                                <p className="">{elem.name}</p>
+                                <>
+                                  {console.log(elem.image)}
+                                  {elem.image && (
+                                    <Image
+                                      alt="avatar"
+                                      className="rounded-full "
+                                      src={elem.image}
+                                      width={40}
+                                      height={40}
+                                    />
+                                  )}
+                                  <p className="">{elem.name}</p>
+                                </>
                               </li>
                             ))}
                           </ul>
