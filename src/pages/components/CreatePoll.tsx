@@ -5,7 +5,7 @@ const inputStyle =
 
 const CreatePoll = (): JSX.Element => {
   const router = useRouter();
-  const key = router.asPath.substring(1);
+  const key = router.asPath.slice(1);
   const [choices, setChoices] = useState(2);
   const ctx = trpc.useContext();
   const renderChoices = () => {

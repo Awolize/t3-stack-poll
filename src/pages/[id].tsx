@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { useRouter } from "next/router";
@@ -10,11 +11,8 @@ import CreatePoll from "./components/CreatePoll";
 
 const PollHome: NextPage = () => {
   const router = useRouter();
-  const key = router.asPath.substring(1);
+  const key = router.asPath.slice(1);
 
-  const pollsByGroup = trpc.authPoll.getPollsByGroupKey.useQuery({
-    key: key,
-  });
   return (
     <>
       <Head>
@@ -40,10 +38,9 @@ const PollHome: NextPage = () => {
 export default PollHome;
 
 const Feed: React.FC = () => {
-  const { data: sessionData } = useSession();
   const router = useRouter();
-  const key = router.asPath.substring(1);
-  const { data, isLoading, isError } = trpc.authPoll.getPollsByGroupKey.useQuery({
+  const key = router.asPath.slice(1);
+  const { data } = trpc.authPoll.getPollsByGroupKey.useQuery({
     key: key,
   });
 
@@ -78,7 +75,7 @@ const Feed: React.FC = () => {
 export const Settings: React.FC = (): JSX.Element => {
   const { data: sessionData } = useSession();
   const router = useRouter();
-  const key = router.asPath.substring(1);
+  const key = router.asPath.slice(1);
   const [open, setOpen] = useState(false);
 
   return (
@@ -163,7 +160,13 @@ export function MemberModal(groupId: string, open: boolean, setOpen: React.Dispa
                                 className="flex w-full items-center gap-2 rounded-md border border-slate-800 p-1"
                               >
                                 {elem.image && (
-                                  <img className="rounded-full " src={elem.image} width={40} height={40} />
+                                  <Image
+                                    alt="avatar"
+                                    className="rounded-full "
+                                    src={elem.image}
+                                    width={40}
+                                    height={40}
+                                  />
                                 )}
                                 <p className="">{elem.name}</p>
                               </li>
